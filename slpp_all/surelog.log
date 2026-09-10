@@ -1,0 +1,168 @@
+********************************************
+*  SURELOG SystemVerilog  Compiler/Linter  *
+********************************************
+
+Copyright (c) 2017-2023 Alain Dargelas,
+http://www.apache.org/licenses/LICENSE-2.0
+
+VERSION: 1.84
+BUILT  : Dec 10 2024
+DATE   : 2026-09-10.10:20:08
+COMMAND: top_fpga.v top.v dispatcher.v grid_GxG.v chain_CxC.v systolic_NxN.v mac.v memory_ctrl.v result_sender.v uart_tx.v -DYOSYS=1 -DSYNTHESIS=1
+
+[INF:CM0023] Creating log file "/home/bismillah/teacher-aipu/rtl/slpp_all/surelog.log".
+[NTE:PP0128] /home/bismillah/teacher-aipu/rtl/top_fpga.v:42:28: Non ASCII character detected, replaced by space.
+[NTE:PP0128] /home/bismillah/teacher-aipu/rtl/top.v:52:28: Non ASCII character detected, replaced by space.
+[NTE:PP0128] /home/bismillah/teacher-aipu/rtl/dispatcher.v:31:26: Non ASCII character detected, replaced by space.
+[NTE:PP0128] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:74:22: Non ASCII character detected, replaced by space.
+[NTE:PP0128] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:35:20: Non ASCII character detected, replaced by space.
+[NTE:PP0128] /home/bismillah/teacher-aipu/rtl/mac.v:33:68: Non ASCII character detected, replaced by space.
+[INF:CP0300] Compilation...
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/chain_CxC.v:1:1: Compile module "work@chain_CxC".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/dispatcher.v:2:1: Compile module "work@dispatcher".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:3:1: Compile module "work@grid_GxG".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/mac.v:1:1: Compile module "work@mac".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/memory_ctrl.v:2:1: Compile module "work@memory_ctrl".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/result_sender.v:1:1: Compile module "work@result_sender".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:1:1: Compile module "work@systolic_NxN".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/top.v:2:1: Compile module "work@top".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/top_fpga.v:2:1: Compile module "work@top_fpga".
+[INF:CP0303] /home/bismillah/teacher-aipu/rtl/uart_tx.v:1:1: Compile module "work@uart_tx".
+[INF:CP0302] Compile class "work@mailbox".
+[INF:CP0302] Compile class "work@process".
+[INF:CP0302] Compile class "work@semaphore".
+[NTE:CP0309] /home/bismillah/teacher-aipu/rtl/chain_CxC.v:9:19: Implicit port type (wire) for "out",
+there are 3 more instances of this message.
+[NTE:CP0309] /home/bismillah/teacher-aipu/rtl/dispatcher.v:12:23: Implicit port type (wire) for "queue_full",
+there are 1 more instances of this message.
+[NTE:CP0309] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:16:19: Implicit port type (wire) for "out",
+there are 2 more instances of this message.
+[NTE:CP0309] /home/bismillah/teacher-aipu/rtl/result_sender.v:14:12: Implicit port type (wire) for "uart_tx_pin".
+[NTE:CP0309] /home/bismillah/teacher-aipu/rtl/top.v:18:19: Implicit port type (wire) for "task_accepted",
+there are 8 more instances of this message.
+[NTE:CP0309] /home/bismillah/teacher-aipu/rtl/top_fpga.v:5:12: Implicit port type (wire) for "uart_tx_pin".
+[INF:EL0526] Design Elaboration...
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:34:33: Compile generate block "work@top_fpga.aipu.grid.genblk1[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:35:37: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk1[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:35:37: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk1[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:35:37: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk1[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:35:37: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk1[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:38:40: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk2[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:39:41: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk2[0].genblk1[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:39:41: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk2[0].genblk1[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:39:41: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk2[0].genblk1[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:39:41: Compile generate block "work@top_fpga.aipu.grid.genblk1[0].genblk2[0].genblk1[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:44:33: Compile generate block "work@top_fpga.aipu.grid.genblk2[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:45:37: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk1[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:45:37: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk1[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:45:37: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk1[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:45:37: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk1[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:48:40: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk2[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:49:41: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk2[0].genblk1[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:49:41: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk2[0].genblk1[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:49:41: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk2[0].genblk1[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:49:41: Compile generate block "work@top_fpga.aipu.grid.genblk2[0].genblk2[0].genblk1[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:76:33: Compile generate block "work@top_fpga.aipu.grid.grow[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:77:37: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/chain_CxC.v:19:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.genblk1[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/chain_CxC.v:19:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.genblk1[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/chain_CxC.v:19:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.genblk1[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/chain_CxC.v:19:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.genblk1[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/chain_CxC.v:28:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:27:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.genblk1[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:27:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.genblk1[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:27:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.genblk1[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:27:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.genblk1[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:30:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.genblk2[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:30:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.genblk2[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:30:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.genblk2[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:30:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.genblk2[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:39:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[0].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[0].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[1].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[1].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[2].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[2].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:43:26: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[3].gen_a_in".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[0].gen_cols[3].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:39:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[0].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[0].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[1].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[1].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[2].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[2].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:43:26: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[3].gen_a_in".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[1].gen_cols[3].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:39:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[0].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[0].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[1].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[1].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[2].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[2].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:43:26: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[3].gen_a_in".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:47:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[2].gen_cols[3].gen_b_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:39:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[0].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:49:26: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[0].gen_b_in".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[1].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:49:26: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[1].gen_b_in".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:41:30: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[2].gen_a_pass".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:49:26: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[2].gen_b_in".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:40:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:43:26: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[3].gen_a_in".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:49:26: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.gen_rows[3].gen_cols[3].gen_b_in".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:65:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[0].col[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[0].col[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[0].col[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[0].col[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:65:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[1].col[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[1].col[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[1].col[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[1].col[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:65:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[2].col[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[2].col[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[2].col[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[2].col[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:65:39: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[3].col[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[3].col[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[3].col[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/systolic_NxN.v:66:43: Compile generate block "work@top_fpga.aipu.grid.grow[0].gcol[0].chain_inst.tile[0].tile_inst.row[3].col[3]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:98:33: Compile generate block "work@top_fpga.aipu.grid.genblk5[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:99:37: Compile generate block "work@top_fpga.aipu.grid.genblk5[0].genblk1[0]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:99:37: Compile generate block "work@top_fpga.aipu.grid.genblk5[0].genblk1[1]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:99:37: Compile generate block "work@top_fpga.aipu.grid.genblk5[0].genblk1[2]".
+[INF:CP0335] /home/bismillah/teacher-aipu/rtl/grid_GxG.v:99:37: Compile generate block "work@top_fpga.aipu.grid.genblk5[0].genblk1[3]".
+[NTE:EL0503] /home/bismillah/teacher-aipu/rtl/top_fpga.v:2:1: Top level module "work@top_fpga".
+[NTE:EL0508] Nb Top level modules: 1.
+[NTE:EL0509] Max instance depth: 11.
+[NTE:EL0510] Nb instances: 25.
+[NTE:EL0511] Nb leaf instances: 0.
+[INF:UH0706] Creating UHDM Model...
+[INF:UH0707] Elaborating UHDM...
+[  FATAL] : 0
+[ SYNTAX] : 0
+[  ERROR] : 0
+[WARNING] : 0
+[   NOTE] : 17

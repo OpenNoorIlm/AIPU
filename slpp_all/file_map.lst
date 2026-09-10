@@ -1,0 +1,10 @@
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/top_fpga.v /home/bismillah/teacher-aipu/rtl/top_fpga.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/top.v /home/bismillah/teacher-aipu/rtl/top.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/dispatcher.v /home/bismillah/teacher-aipu/rtl/dispatcher.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/grid_GxG.v /home/bismillah/teacher-aipu/rtl/grid_GxG.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/chain_CxC.v /home/bismillah/teacher-aipu/rtl/chain_CxC.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/systolic_NxN.v /home/bismillah/teacher-aipu/rtl/systolic_NxN.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/mac.v /home/bismillah/teacher-aipu/rtl/mac.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/memory_ctrl.v /home/bismillah/teacher-aipu/rtl/memory_ctrl.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/result_sender.v /home/bismillah/teacher-aipu/rtl/result_sender.v
+/home/bismillah/teacher-aipu/rtl/slpp_all/lib/work/uart_tx.v /home/bismillah/teacher-aipu/rtl/uart_tx.v
