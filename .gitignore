@@ -1,0 +1,14 @@
+# Build outputs
+*.json
+*.fs
+*.log
+obj_dir/
+
+# Synlig binary (too large for GitHub)
+synlig/synlig
+synlig/*.so
+synlig/*.a
+
+# Python cache
+__pycache__/
+*.pyc

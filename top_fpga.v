@@ -21,7 +21,7 @@ module top_fpga(
     wire [7:0] sram_wr_data;
     wire [7:0] sram_rd_data;
 
-    reg [9:0] k;
+    reg [10:0] k;
     initial begin
         for (k = 0; k < 1024; k = k + 1)
             sram[k] = k[7:0];
