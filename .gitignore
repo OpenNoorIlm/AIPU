@@ -29,3 +29,7 @@ __pycache__/
 
 # Arduino build cache
 /tmp/relay_build*/
+
+# Internal session docs (for Claude continuity only)
+about.md
+continue.md
