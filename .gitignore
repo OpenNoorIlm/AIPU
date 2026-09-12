@@ -1,0 +1,31 @@
+# Build artifacts
+hardware/rtl/obj_dir/
+hardware/rtl/slpp_all/
+hardware/rtl/synlig/
+hardware/uart/obj_dir/
+hardware/uart/obj_dir_top/
+hardware/test/slpp_all/
+hardware/sim/*.vcd
+hardware/tb/*.vcd
+
+# Intermediate synthesis/P&R files
+hardware/**/*.json
+hardware/**/*_routed.json
+hardware/**/*_p.json
+hardware/**/*_patched.json
+hardware/**/*_nd*.json
+
+# Bitstreams (large binaries, regenerate with do.sh)
+hardware/**/*.fs
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Editor
+*.swp
+*.swo
+.vscode/
+
+# Arduino build cache
+/tmp/relay_build*/
