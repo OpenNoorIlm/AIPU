@@ -824,6 +824,14 @@ For commercial licensing, partnership, investment, or anything that should not b
 > contributors on the project at the time of your enquiry. If there are no active
 > contributors at the time, your email will be handled privately and will not be opened
 > as a public issue. We will always inform you of how your enquiry is being handled.
+>
+> **Why we do this:** AIPU is built by contributors who give their time, skill, and effort
+> freely under copyleft licenses. When someone seeks to use that work under a custom or
+> commercial license — outside the terms those contributors agreed to — it is only right
+> that the people whose work is involved have a voice in that decision. Opening the
+> enquiry as a GitHub issue gives active contributors full visibility and the opportunity
+> to participate in the discussion. We do this out of respect for every contributor's
+> contribution.
 
 For security vulnerabilities (do not post publicly):
 → [noorulilm.contact.us@gmail.com](mailto:noorulilm.contact.us@gmail.com)
