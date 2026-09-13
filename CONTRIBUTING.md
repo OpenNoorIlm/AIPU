@@ -188,44 +188,7 @@ By adding this line, you certify the following (paraphrased from the
 > license used by this project. I understand that this contribution and my name and
 > email will be permanently associated with it in the version history.
 
-**The full DCO text:**
-
-```
-Developer Certificate of Origin
-Version 1.1
-
-Copyright (C) 2004, 2006 The Linux Foundation and its contributors.
-
-Everyone is permitted to copy and distribute verbatim copies of this
-license document, but changing it is not allowed.
-
-
-Developer's Certificate of Origin 1.1
-
-By making a contribution to this project, I certify that:
-
-(a) The contribution was created in whole or in part by me and I
-    have the right to submit it under the open source license
-    indicated in the file; or
-
-(b) The contribution is based upon previous work that, to the best
-    of my knowledge, is covered under an appropriate open source
-    license and I have the right under that license to submit that
-    work with modifications, whether created in whole or in part
-    by me, under the same open source license (unless I am
-    permitted to submit under a different license), as indicated
-    in the file; or
-
-(c) The contribution was provided directly to me by some other
-    person who certified (a), (b) or (c) and I have not modified
-    it.
-
-(d) I understand and agree that this project and the contribution
-    are public and that a record of the contribution (including all
-    personal information I submit with it, including my sign-off) is
-    maintained indefinitely and may be redistributed consistent with
-    this project or the open source license(s) involved.
-```
+The full DCO text is at [developercertificate.org](https://developercertificate.org/). In short: you certify you wrote it yourself or have the right to submit it under this project's licenses, and you understand the contribution and your sign-off are permanently public in the git history.
 
 ### Copyright Assignment
 
@@ -854,6 +817,13 @@ For contribution questions, architecture discussions, and general project talk:
 
 For commercial licensing, partnership, investment, or anything that should not be public:
 → [noorulilm.contact.us@gmail.com](mailto:noorulilm.contact.us@gmail.com)
+
+> **Custom license applications — how they are handled:**
+> By emailing us to apply for a custom or commercial license, you agree that your email
+> may be opened as a GitHub issue for discussion among contributors if there are active
+> contributors on the project at the time of your enquiry. If there are no active
+> contributors at the time, your email will be handled privately and will not be opened
+> as a public issue. We will always inform you of how your enquiry is being handled.
 
 For security vulnerabilities (do not post publicly):
 → [noorulilm.contact.us@gmail.com](mailto:noorulilm.contact.us@gmail.com)
