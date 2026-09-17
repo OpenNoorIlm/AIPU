@@ -1,5 +1,8 @@
 IO_LOC "clk" H11;
 IO_PORT "clk" IO_TYPE=LVCMOS18 PULL_MODE=NONE;
 
-IO_LOC "uart_tx_pin" T13;
+IO_LOC "uart_tx_pin" M11;
 IO_PORT "uart_tx_pin" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+
+IO_LOC "uart_rx_pin" T13;
+IO_PORT "uart_rx_pin" PULL_MODE=UP IO_TYPE=LVCMOS33;

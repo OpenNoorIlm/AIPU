@@ -42,7 +42,14 @@ module top #(
     wire [$clog2(SRAM_DEPTH)-1:0] mem_sram_rd_addr;
     wire [$clog2(SRAM_DEPTH)-1:0] rs_sram_rd_addr;
 
-    assign sram_rd_addr = mem_done ? rs_sram_rd_addr : mem_sram_rd_addr;
+    // Latch mem_done: result_sender needs SRAM for many cycles but mem_done is
+    // only high for 1 clock. Once computation completes (fired=1 in top_fpga.v),
+    // result_sender owns the SRAM bus permanently.
+    reg rs_owns_sram = 0;
+    always @(posedge clk)
+        if (mem_start)     rs_owns_sram <= 0; // memory_ctrl reclaims SRAM for new task
+        else if (mem_done) rs_owns_sram <= 1; // result_sender takes SRAM
+    assign sram_rd_addr = rs_owns_sram ? rs_sram_rd_addr : mem_sram_rd_addr;
 
     dispatcher #(.G(G), .QDEPTH(QDEPTH)) disp(
         .clk(clk), .reset(reset),
@@ -90,6 +97,7 @@ module top #(
     ) rs(
         .clk(clk), .reset(reset),
         .mem_done(mem_done),
+        .mem_dst_addr(mem_dst_addr),
         .sram_rd_data(sram_rd_data),
         .sram_rd_addr(rs_sram_rd_addr),
         .uart_tx_pin(uart_tx_pin)

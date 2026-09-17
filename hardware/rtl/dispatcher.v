@@ -26,25 +26,25 @@ module dispatcher #(
     assign queue_full  = (count == QDEPTH);
     assign queue_count = count;
 
-    integer r, c;
+    integer gr, gc;
     reg found;
 
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk) begin
         if (reset) begin
             wr_ptr        <= 0;
             rd_ptr        <= 0;
             count         <= 0;
             task_accepted <= 0;
-            for (r = 0; r < G; r = r + 1) begin
-                for (c = 0; c < G; c = c + 1) begin
-                    enable[r][c]      <= 0;
-                    chain_busy[r][c]  <= 0;
-                    chain_timer[r][c] <= 0;
-                    active_task[r][c] <= 0;
+            for (gr = 0; gr < G; gr = gr + 1) begin
+                for (gc = 0; gc < G; gc = gc + 1) begin
+                    enable[gr][gc]      <= 0;
+                    chain_busy[gr][gc]  <= 0;
+                    chain_timer[gr][gc] <= 0;
+                    active_task[gr][gc] <= 0;
                 end
             end
-            for (r = 0; r < QDEPTH; r = r + 1)
-                q_valid[r] <= 0;
+            for (gr = 0; gr < QDEPTH; gr = gr + 1)
+                q_valid[gr] <= 0;
         end else begin
             task_accepted <= 0;
 
@@ -59,30 +59,30 @@ module dispatcher #(
 
             found <= 0;
             if (count > 0) begin
-                for (r = 0; r < G; r = r + 1) begin
-                    for (c = 0; c < G; c = c + 1) begin
-                        if (!found && !chain_busy[r][c] && q_valid[rd_ptr]) begin
-                            enable[r][c]      <= 1;
-                            chain_busy[r][c]  <= 1;
-                            chain_timer[r][c] <= q_cycles[rd_ptr];
-                            active_task[r][c] <= q_id[rd_ptr];
-                            q_valid[rd_ptr]   <= 0;
-                            rd_ptr            <= rd_ptr + 1;
-                            count             <= count - 1;
-                            found             <= 1;
+                for (gr = 0; gr < G; gr = gr + 1) begin
+                    for (gc = 0; gc < G; gc = gc + 1) begin
+                        if (!found && !chain_busy[gr][gc] && q_valid[rd_ptr]) begin
+                            enable[gr][gc]      <= 1;
+                            chain_busy[gr][gc]  <= 1;
+                            chain_timer[gr][gc] <= q_cycles[rd_ptr];
+                            active_task[gr][gc] <= q_id[rd_ptr];
+                            q_valid[rd_ptr]     <= 0;
+                            rd_ptr              <= rd_ptr + 1;
+                            count               <= count - 1;
+                            found               <= 1;
                         end
                     end
                 end
             end
 
-            for (r = 0; r < G; r = r + 1) begin
-                for (c = 0; c < G; c = c + 1) begin
-                    if (chain_busy[r][c]) begin
-                        if (chain_timer[r][c] <= 1) begin
-                            enable[r][c]     <= 0;
-                            chain_busy[r][c] <= 0;
+            for (gr = 0; gr < G; gr = gr + 1) begin
+                for (gc = 0; gc < G; gc = gc + 1) begin
+                    if (chain_busy[gr][gc]) begin
+                        if (chain_timer[gr][gc] <= 1) begin
+                            enable[gr][gc]     <= 0;
+                            chain_busy[gr][gc] <= 0;
                         end else begin
-                            chain_timer[r][c] <= chain_timer[r][c] - 1;
+                            chain_timer[gr][gc] <= chain_timer[gr][gc] - 1;
                         end
                     end
                 end

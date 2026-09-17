@@ -11,7 +11,7 @@ module uart_tx #(
     output reg busy      // high while sending
 );
 
-    localparam CLKS_PER_BIT = CLK_FREQ / BAUD_RATE;  // 234
+    localparam CLKS_PER_BIT = 234; // 27_000_000 / 115_200 = 234.375, hardcoded to match uart/uart_tx.v
 
     localparam IDLE  = 2'd0;
     localparam START = 2'd1;
@@ -23,7 +23,7 @@ module uart_tx #(
     reg [8:0]  clk_count;   // counts cycles per bit (max 234, fits in 9 bits)
     reg [2:0]  bit_index;   // which bit we're sending
 
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk) begin
         if (reset) begin
             state     <= IDLE;
             tx        <= 1;   // UART idle = high

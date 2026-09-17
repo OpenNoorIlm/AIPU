@@ -43,7 +43,7 @@ module memory_ctrl #(
     reg [($clog2(G) > 0 ? $clog2(G) : 1)-1:0] sel_row;
     reg [($clog2(G) > 0 ? $clog2(G) : 1)-1:0] sel_col;
 
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk) begin
         if (reset) begin
             state        <= IDLE;
             done         <= 0;
