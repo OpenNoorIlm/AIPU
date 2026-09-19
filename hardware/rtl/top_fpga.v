@@ -55,7 +55,7 @@ module top_fpga(
     // ----------------------------------------------------------------
     reg        task_valid    = 0;
     reg [7:0]  task_id       = 8'd1;
-    reg [31:0] task_cycles   = 32'd50;
+    reg [31:0] task_cycles   = 32'd100;
     reg        mem_start     = 0;
     reg [0:0]  mem_chain_row = 0;
     reg [0:0]  mem_chain_col = 0;

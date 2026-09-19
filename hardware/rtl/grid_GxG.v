@@ -74,7 +74,7 @@ module grid_GxG #(
                 chain_CxC #(.N(N), .C(C)) chain_inst(
                     .clk(clk),
                     .reset(reset),
-                    .in_out_reset(enable[r][c] ? 8'h00 : 8'hFF),
+                    .in_out_reset((in_out_reset != 8'h00 || !enable[r][c]) ? 8'hFF : 8'h00),
                     .a_in(a_gated[r][c]),
                     .b_in(b_gated[r][c]),
                     .next_a_in(next_a_gated[r][c]),

@@ -41,14 +41,14 @@ module top #(
     wire [7:0] a_out[0:G-1][0:N-1];
     wire [$clog2(SRAM_DEPTH)-1:0] mem_sram_rd_addr;
     wire [$clog2(SRAM_DEPTH)-1:0] rs_sram_rd_addr;
+    wire mac_reset_w;  // from memory_ctrl: pulses 1 to zero all accumulators
 
     // Latch mem_done: result_sender needs SRAM for many cycles but mem_done is
-    // only high for 1 clock. Once computation completes (fired=1 in top_fpga.v),
-    // result_sender owns the SRAM bus permanently.
+    // only high for 1 clock.
     reg rs_owns_sram = 0;
     always @(posedge clk)
-        if (mem_start)     rs_owns_sram <= 0; // memory_ctrl reclaims SRAM for new task
-        else if (mem_done) rs_owns_sram <= 1; // result_sender takes SRAM
+        if (mem_start)     rs_owns_sram <= 0;
+        else if (mem_done) rs_owns_sram <= 1;
     assign sram_rd_addr = rs_owns_sram ? rs_sram_rd_addr : mem_sram_rd_addr;
 
     dispatcher #(.G(G), .QDEPTH(QDEPTH)) disp(
@@ -59,9 +59,11 @@ module top #(
         .enable(enable), .active_task(active_task), .done(done)
     );
 
+    // in_out_reset: mac_reset_w=1 forces all accumulators to 0 (overrides enable logic)
+    // When mac_reset_w=0, grid_GxG uses its own enable-based logic (8'hFF when idle)
     grid_GxG #(.G(G), .C(C), .N(N)) grid(
         .clk(clk), .reset(reset),
-        .in_out_reset(8'h00),
+        .in_out_reset(mac_reset_w ? 8'hFF : 8'h00),
         .a_in(a_in), .b_in(b_in),
         .next_a_in(next_a_in),
         .next_b_in(next_b_in),
@@ -80,6 +82,7 @@ module top #(
         .next_a_in(next_a_in),
         .next_b_in(next_b_in),
         .out(grid_out),
+        .mac_reset(mac_reset_w),
         .start(mem_start),
         .chain_row(mem_chain_row),
         .chain_col(mem_chain_col),

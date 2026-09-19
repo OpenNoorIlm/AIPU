@@ -12,12 +12,9 @@ module mac(
     output reg [7:0] b_out,
     output reg [7:0] out_reset
 );
-    wire [7:0] a_sel = (a == 0 || b == 0) ? next_a : a;
-    wire [7:0] b_sel = (a == 0 || b == 0) ? next_b : b;
-
-    // 8x8 signed multiply -- synthesises to MULT9X9 on Gowin
+    // Signed 8x8 multiply — no zero-skip, use inputs directly
     (* use_dsp = "yes" *)
-    wire signed [15:0] product = $signed(a_sel) * $signed(b_sel);
+    wire signed [15:0] product = $signed(a) * $signed(b);
 
     always @(posedge clk) begin
         if (reset) begin
@@ -27,12 +24,12 @@ module mac(
             out_reset <= 0;
         end else begin
             out_reset <= in_out_reset;
-            a_out     <= a_sel;
-            b_out     <= b_sel;
+            a_out     <= a;
+            b_out     <= b;
             if (in_out_reset != 8'h00)
                 out <= 0;
             else
-                out <= out + {{16{product[15]}}, product}; // sign-extend to 32b
+                out <= out + {{16{product[15]}}, product};
         end
     end
 endmodule

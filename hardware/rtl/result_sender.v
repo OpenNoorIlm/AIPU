@@ -103,8 +103,8 @@ module result_sender #(
     localparam S_EOL_R      = 4'd13; // send '\r'
     localparam S_EOL_N      = 4'd14; // send '\n'
 
-    // Number of result bytes = C * N * N * 4 (4 bytes per INT32 accumulator)
-    localparam RESULT_BYTES = C * N * N * 4;
+    // Number of result bytes = N * N * 4 (one INT32 per MAC output, big-endian)
+    localparam RESULT_BYTES = N * N * 4;
 
     reg [3:0]  state;
     reg [3:0]  boot_idx;
