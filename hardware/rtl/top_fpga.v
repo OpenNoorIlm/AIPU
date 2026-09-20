@@ -19,9 +19,20 @@ module top_fpga(
     // ----------------------------------------------------------------
     reg [7:0] sram [0:1023];
     reg [9:0] sram_rd_addr;
-    wire [9:0] sram_wr_addr;
-    wire       sram_wr_en;
-    wire [7:0] sram_wr_data;
+    wire [9:0] sram_wr_addr;   // from AIPU (memory_ctrl)
+    wire       sram_wr_en;     // from AIPU
+    wire [7:0] sram_wr_data;   // from AIPU
+
+    // UART write port — written by 0xBB command parser when !busy
+    reg       uart_wr_en   = 0;
+    reg [9:0] uart_wr_addr = 0;
+    reg [7:0] uart_wr_data = 0;
+
+    // Mux: UART write takes priority when active (AIPU is never writing at the same time)
+    wire       final_wr_en   = sram_wr_en | uart_wr_en;
+    wire [9:0] final_wr_addr = uart_wr_en ? uart_wr_addr : sram_wr_addr;
+    wire [7:0] final_wr_data = uart_wr_en ? uart_wr_data : sram_wr_data;
+
     wire [7:0] sram_rd_data;
 
     reg [10:0] k;
@@ -32,7 +43,7 @@ module top_fpga(
 
     assign sram_rd_data = sram[sram_rd_addr];
     always @(posedge clk)
-        if (sram_wr_en) sram[sram_wr_addr] <= sram_wr_data;
+        if (final_wr_en) sram[final_wr_addr] <= final_wr_data;
 
     // ----------------------------------------------------------------
     // UART RX — receives bytes from ESP32 (PC → FPGA)
@@ -64,16 +75,34 @@ module top_fpga(
     reg [31:0] mem_num_rows  = 32'd4;
 
     // ----------------------------------------------------------------
-    // Task protocol parser
-    // Packet: 0xAA  SRC_HI SRC_LO  DST_HI DST_LO  OUT_HI OUT_LO  0x55
-    //         [0]   [1]    [2]     [3]    [4]     [5]    [6]     [7]
-    // 8 bytes total. On valid packet: trigger computation with given addrs.
-    // Any single byte (not 0xAA) also works as a simple re-trigger (legacy).
+    // Command protocol
+    //
+    // COMPUTE packet (8 bytes):
+    //   0xAA [SRC_HI] [SRC_LO] [DST_HI] [DST_LO] [0x02] [0x00] [0x55]
+    //   Triggers computation using given SRAM src/dst addresses.
+    //
+    // WRITE packet (4 + len bytes):
+    //   0xBB [ADDR_HI] [ADDR_LO] [LEN] [byte_0] ... [byte_LEN-1]
+    //   Writes LEN bytes to SRAM starting at ADDR. Only valid when !busy.
+    //
+    // Legacy single byte (any byte not 0xAA or 0xBB):
+    //   Re-triggers computation with current src/dst addresses.
     // ----------------------------------------------------------------
     localparam PKT_LEN = 8;
     reg [7:0] pkt_buf [0:PKT_LEN-1];
-    reg [2:0] pkt_idx = 0;   // 0..7
-    reg       pkt_armed = 0; // seen 0xAA start marker
+    reg [2:0] pkt_idx = 0;
+
+    // Command parser states
+    localparam CMD_IDLE      = 3'd0;
+    localparam CMD_COMPUTE   = 3'd1;  // accumulating 0xAA packet bytes
+    localparam CMD_WR_ADDRHI = 3'd2;  // waiting for addr_hi of 0xBB packet
+    localparam CMD_WR_ADDRLO = 3'd3;  // waiting for addr_lo
+    localparam CMD_WR_LEN    = 3'd4;  // waiting for length byte
+    localparam CMD_WR_DATA   = 3'd5;  // receiving data bytes
+
+    reg [2:0]  cmd_state    = CMD_IDLE;
+    reg [9:0]  wr_cur_addr  = 0;
+    reg [7:0]  wr_remaining = 0;
 
     // ----------------------------------------------------------------
     // Boot sequencer + re-trigger
@@ -96,12 +125,16 @@ module top_fpga(
             busy         <= 0;
             trig         <= 0;
             pkt_idx      <= 0;
-            pkt_armed    <= 0;
+            cmd_state    <= CMD_IDLE;
+            wr_cur_addr  <= 0;
+            wr_remaining <= 0;
+            uart_wr_en   <= 0;
             mem_src_addr <= 10'd0;
             mem_dst_addr <= 10'd512;
         end else begin
             task_valid <= 0;
             mem_start  <= 0;
+            uart_wr_en <= 0;   // default: no UART write this cycle
 
             // --- Boot-time one-shot ---
             if (!fired) begin
@@ -115,36 +148,74 @@ module top_fpga(
             // --- Completion ---
             if (mem_done) busy <= 0;
 
-            // --- UART RX packet parser ---
+            // --- UART RX command parser ---
             if (rx_valid && fired) begin
-                if (rx_data == 8'hAA) begin
-                    // Start of structured packet
-                    pkt_armed <= 1;
-                    pkt_idx   <= 0;
-                    pkt_buf[0] <= rx_data;
-                end else if (pkt_armed) begin
-                    pkt_idx <= pkt_idx + 1;
-                    pkt_buf[pkt_idx + 1] <= rx_data;
+                case (cmd_state)
 
-                    if (pkt_idx == PKT_LEN - 2) begin
-                        // Received all 8 bytes — check end marker
-                        pkt_armed <= 0;
-                        if (rx_data == 8'h55 && !busy) begin
-                            // Valid structured packet — extract addresses
-                            mem_src_addr <= {pkt_buf[1][1:0], pkt_buf[2]};
-                            mem_dst_addr <= {pkt_buf[3][1:0], pkt_buf[4]};
-                            // pkt_buf[5..6] = output addr (alias of dst for now)
-                            task_valid   <= 1;
-                            trig         <= 3'd4;
-                            busy         <= 1;
+                    CMD_IDLE: begin
+                        if (rx_data == 8'hAA) begin
+                            // Start of compute packet
+                            pkt_buf[0] <= rx_data;
+                            pkt_idx    <= 0;
+                            cmd_state  <= CMD_COMPUTE;
+                        end else if (rx_data == 8'hBB && !busy) begin
+                            // Start of write packet
+                            cmd_state <= CMD_WR_ADDRHI;
+                        end else if (!busy) begin
+                            // Legacy single-byte trigger
+                            task_valid <= 1;
+                            trig       <= 3'd4;
+                            busy       <= 1;
                         end
                     end
-                end else if (!busy) begin
-                    // Single byte (not 0xAA) = legacy trigger, keep current addrs
-                    task_valid <= 1;
-                    trig       <= 3'd4;
-                    busy       <= 1;
-                end
+
+                    CMD_COMPUTE: begin
+                        pkt_idx <= pkt_idx + 1;
+                        pkt_buf[pkt_idx + 1] <= rx_data;
+                        if (pkt_idx == PKT_LEN - 2) begin
+                            // All 8 bytes received — validate end marker
+                            cmd_state <= CMD_IDLE;
+                            if (rx_data == 8'h55 && !busy) begin
+                                mem_src_addr <= {pkt_buf[1][1:0], pkt_buf[2]};
+                                mem_dst_addr <= {pkt_buf[3][1:0], pkt_buf[4]};
+                                task_valid   <= 1;
+                                trig         <= 3'd4;
+                                busy         <= 1;
+                            end
+                        end
+                    end
+
+                    CMD_WR_ADDRHI: begin
+                        wr_cur_addr[9:8] <= rx_data[1:0];
+                        cmd_state        <= CMD_WR_ADDRLO;
+                    end
+
+                    CMD_WR_ADDRLO: begin
+                        wr_cur_addr[7:0] <= rx_data;
+                        cmd_state        <= CMD_WR_LEN;
+                    end
+
+                    CMD_WR_LEN: begin
+                        wr_remaining <= rx_data;
+                        if (rx_data == 8'd0)
+                            cmd_state <= CMD_IDLE;  // zero-length write = no-op
+                        else
+                            cmd_state <= CMD_WR_DATA;
+                    end
+
+                    CMD_WR_DATA: begin
+                        // Write one byte to SRAM this cycle
+                        uart_wr_en   <= 1;
+                        uart_wr_addr <= wr_cur_addr;
+                        uart_wr_data <= rx_data;
+                        wr_cur_addr  <= wr_cur_addr + 1;
+                        wr_remaining <= wr_remaining - 1;
+                        if (wr_remaining == 8'd1)
+                            cmd_state <= CMD_IDLE;
+                    end
+
+                    default: cmd_state <= CMD_IDLE;
+                endcase
             end
 
             // --- Countdown to mem_start ---

@@ -31,21 +31,22 @@ module memory_ctrl #(
 );
     // IDLE    - wait for start
     // CLEAR   - pulse mac_reset=1 for 1 cycle (zeros all accumulators)
-    //           a_in/b_in are all zero at this point
-    // LOAD_A  - read N bytes from SRAM into a_buf (N cycles)
-    // LOAD_B  - read N bytes from SRAM into b_buf (N cycles)
-    // PRESENT - assert all a_in and b_in simultaneously for exactly 1 cycle
-    //           each MAC[i][j] computes a_buf[i]*b_buf[j] in this 1 cycle
-    // DRAIN   - hold a_in=0, b_in=0 for N cycles so pipeline latency settles
-    //           (MAC out register has 1-cycle latency from the multiply)
-    // STORE   - write N*N INT32 results to SRAM
+    // LOAD_A  - read N bytes (column k of A) from SRAM into a_buf (N cycles)
+    //           A is stored column-major: col k starts at src_addr + k*N
+    // LOAD_B  - read N bytes (row k of B) from SRAM into b_buf (N cycles)
+    //           B is stored row-major: row k starts at src_addr + N*N + k*N
+    // PRESENT - skewed input feeding: cycle i presents a_buf[i], b_buf[i]
+    //           exits after N+1 cycles so last input is safely registered
+    // DRAIN   - zero inputs, wait N+1 cycles for pipeline latency
+    //           then: if k_iter < N-1 → increment k, go back to LOAD_A (no reset)
+    //                 if k_iter == N-1 → STORE (N outer products accumulated)
+    // STORE   - write N*N INT32 results big-endian to SRAM[dst_addr]
     localparam IDLE    = 3'd0;
     localparam CLEAR   = 3'd1;
     localparam LOAD_A  = 3'd2;
     localparam LOAD_B  = 3'd3;
     localparam PRESENT = 3'd4;
     localparam DRAIN   = 3'd5;
-    localparam PRESENT_CYCLES = 2*N - 1; // hold inputs for full systolic propagation
     localparam STORE   = 3'd6;
 
     reg [2:0]  state;
@@ -53,10 +54,12 @@ module memory_ctrl #(
     reg [$clog2(N*N)-1:0]          mac_idx;
     reg [1:0]                       byte_sel;
     reg [$clog2(N*N*4+1)-1:0]      col_counter;
-    reg [$clog2(N+2)-1:0]          drain_cnt;
+    reg [$clog2(2*N+1)-1:0]         drain_cnt;
     reg [($clog2(G) > 0 ? $clog2(G) : 1)-1:0] sel_row;
     reg [($clog2(G) > 0 ? $clog2(G) : 1)-1:0] sel_col;
     reg [$clog2(SRAM_DEPTH)-1:0]   dst_latch;
+    reg [$clog2(SRAM_DEPTH)-1:0]   src_latch;   // latched src_addr for k-loop use
+    reg [$clog2(N+1)-1:0]          k_iter;       // outer product iteration 0..N-1
 
     // Pre-load buffers — hold full vectors before presenting to array
     reg [7:0] a_buf [0:N-1];
@@ -86,6 +89,8 @@ module memory_ctrl #(
             sel_row      <= 0;
             sel_col      <= 0;
             dst_latch    <= 0;
+            src_latch    <= 0;
+            k_iter       <= 0;
             // zero a_in and b_in
             a_in[0][0] <= 0; a_in[0][1] <= 0; a_in[0][2] <= 0; a_in[0][3] <= 0;
             b_in[0][0] <= 0; b_in[0][1] <= 0; b_in[0][2] <= 0; b_in[0][3] <= 0;
@@ -103,49 +108,65 @@ module memory_ctrl #(
                         sel_row      <= chain_row;
                         sel_col      <= chain_col;
                         dst_latch    <= dst_addr;
+                        src_latch    <= src_addr;
                         sram_wr_addr <= dst_addr;
-                        sram_rd_addr <= src_addr;
+                        sram_rd_addr <= src_addr;  // col 0 of A = src_addr + 0*N
                         row_counter  <= 0;
                         col_counter  <= 0;
                         drain_cnt    <= 0;
                         mac_idx      <= 0;
                         byte_sel     <= 0;
+                        k_iter       <= 0;
                         state        <= CLEAR;
                     end
                 end
 
-                // Pulse mac_reset=1 for 1 cycle — zeros all MAC accumulators
-                // a_in/b_in are already 0 (from IDLE), so no spurious accumulation
+                // Pulse mac_reset=1 for 1 cycle — zeros all MAC accumulators.
+                // Also prime the SRAM address for col 0 of A.
+                // SRAM has 1-cycle read latency: address set this cycle →
+                // data valid NEXT cycle. So we set sram_rd_addr here and spend
+                // one extra "addr settle" cycle in LOAD_A before reading.
                 CLEAR: begin
                     mac_reset    <= 1;
                     row_counter  <= 0;
-                    // Issue first SRAM read: sram[src_addr] appears on rd_data next cycle
-                    sram_rd_addr <= src_addr;
+                    // Set address for col k_iter of A: src_latch + k_iter*N
+                    // (k_iter=0 on first call, or already set when looping back)
+                    sram_rd_addr <= src_latch + k_iter * N;
                     state        <= LOAD_A;
                 end
 
-                // Read N bytes into a_buf (N cycles)
-                // Each cycle: rd_data = sram[src_addr + row_counter]
+                // Read N bytes = column k_iter of A into a_buf.
+                // Cycle 0: sram_rd_data is valid (address was set in CLEAR or DRAIN).
+                //          Store byte 0, advance address to byte 1.
+                // Cycle 1: sram_rd_data = byte 1 → store, advance address.
+                // ...
+                // Cycle N-1: store last byte, then set address for row k_iter of B.
                 LOAD_A: begin
                     mac_reset <= 0;
+                    // Store the byte that came back from the address we set last cycle
                     a_buf[row_counter[$clog2(N)-1:0]] <= sram_rd_data;
-                    sram_rd_addr <= sram_rd_addr + 1;
-                    row_counter  <= row_counter + 1;
-                    if (row_counter >= N - 1) begin
-                        row_counter <= 0;
-                        // sram_rd_addr now = src_addr+N, pointing at B
-                        state <= LOAD_B;
+                    if (row_counter < N - 1) begin
+                        sram_rd_addr <= sram_rd_addr + 1;
+                        row_counter  <= row_counter + 1;
+                    end else begin
+                        row_counter  <= 0;
+                        // Set address for row k_iter of B; data valid next cycle
+                        sram_rd_addr <= src_latch + N*N + k_iter*N;
+                        state        <= LOAD_B;
                     end
                 end
 
-                // Read N bytes into b_buf (N cycles)
+                // Read N bytes = row k_iter of B into b_buf.
+                // Same 1-cycle-latency convention as LOAD_A.
                 LOAD_B: begin
                     b_buf[row_counter[$clog2(N)-1:0]] <= sram_rd_data;
-                    sram_rd_addr <= sram_rd_addr + 1;
-                    row_counter  <= row_counter + 1;
-                    if (row_counter >= N - 1) begin
+                    if (row_counter < N - 1) begin
+                        sram_rd_addr <= sram_rd_addr + 1;
+                        row_counter  <= row_counter + 1;
+                    end else begin
                         row_counter <= 0;
-                        state <= PRESENT;
+                        drain_cnt   <= 0;
+                        state       <= PRESENT;
                     end
                 end
 
@@ -174,7 +195,7 @@ module memory_ctrl #(
                     drain_cnt <= drain_cnt + 1;
                     // Exit one cycle AFTER last input (drain_cnt==N, not N-1)
                     // so the last a/b values are registered before state changes
-                    if (drain_cnt >= N) begin
+                    if (drain_cnt >= 2*N - 1) begin
                         drain_cnt <= 0;
                         state     <= DRAIN;
                     end
@@ -191,12 +212,26 @@ module memory_ctrl #(
                 // drain_cnt goes 0,1,...,N so exit when drain_cnt >= N
                 DRAIN: begin
                     drain_cnt <= drain_cnt + 1;
-                    if (drain_cnt >= N) begin
-                        col_counter  <= 0;
-                        mac_idx      <= 0;
-                        byte_sel     <= 0;
-                        sram_wr_addr <= dst_latch;
-                        state        <= STORE;
+                    if (drain_cnt >= 2*N - 1) begin
+                        drain_cnt <= 0;
+                        if (k_iter < N - 1) begin
+                            // More outer products to accumulate — no mac_reset
+                            k_iter       <= k_iter + 1;
+                            row_counter  <= 0;
+                            // Prime SRAM address for col (k_iter+1) of A.
+                            // k_iter still holds OLD value here (non-blocking),
+                            // so (k_iter+1)*N is correct for the next iteration.
+                            sram_rd_addr <= src_latch + (k_iter + 1) * N;
+                            state        <= LOAD_A;
+                        end else begin
+                            // All N outer products accumulated — write results
+                            col_counter  <= 0;
+                            mac_idx      <= 0;
+                            byte_sel     <= 0;
+                            sram_wr_addr <= dst_latch;
+                            sram_wr_en   <= 1;
+                            state        <= STORE;
+                        end
                     end
                 end
 
