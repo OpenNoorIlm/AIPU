@@ -1,16 +1,17 @@
 /* verilator lint_off UNUSEDSIGNAL */
 module systolic_NxN #(parameter N = 4)(
-    input clk,
-    input reset,
-    input [7:0] in_out_reset,
+    input        clk,
+    input        reset,
+    input  [1:0] precision,
+    input  [7:0] in_out_reset,
     input  [7:0] a_in[0:N-1],
     input  [7:0] b_in[0:N-1],
     input  [7:0] next_a_in[0:N-1],
     input  [7:0] next_b_in[0:N-1],
     output reg [31:0] out[0:N-1][0:N-1],
-    output reg [7:0] a_out[0:N-1],
-    output reg [7:0] b_out[0:N-1],
-    output reg [7:0] out_reset[0:N-1]
+    output reg [7:0]  a_out[0:N-1],
+    output reg [7:0]  b_out[0:N-1],
+    output reg [7:0]  out_reset[0:N-1]
 );
     wire [7:0] a_wire[0:N-1][0:N];
     wire [7:0] b_wire[0:N][0:N-1];
@@ -61,6 +62,7 @@ module systolic_NxN #(parameter N = 4)(
                 mac mac_inst(
                     .clk(clk),
                     .reset(reset),
+                    .precision(precision),
                     .in_out_reset(in_out_reset),
                     .a(a_wire[i][j]),
                     .b(b_wire[i][j]),

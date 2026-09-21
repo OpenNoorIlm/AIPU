@@ -5,16 +5,17 @@ module grid_GxG #(
     parameter C = 2,
     parameter N = 4
 )(
-    input clk,
-    input reset,
-    input [7:0] in_out_reset,
+    input        clk,
+    input        reset,
+    input  [1:0] precision,
+    input  [7:0] in_out_reset,
     input  [7:0] a_in[0:G-1][0:N-1],
     input  [7:0] b_in[0:G-1][0:N-1],
     input  [7:0] next_a_in[0:G-1][0:C-1][0:N-1],
     input  [7:0] next_b_in[0:G-1][0:C-1][0:N-1],
     input  enable[0:G-1][0:G-1],
     output [31:0] out[0:G-1][0:G-1][0:C-1][0:N-1][0:N-1],
-    output [7:0] a_out[0:G-1][0:N-1],
+    output [7:0]  a_out[0:G-1][0:N-1],
     output done[0:G-1][0:G-1]
 );
     wire [7:0] a_chain     [0:G-1][0:G][0:N-1];
@@ -74,6 +75,7 @@ module grid_GxG #(
                 chain_CxC #(.N(N), .C(C)) chain_inst(
                     .clk(clk),
                     .reset(reset),
+                    .precision(precision),
                     .in_out_reset((in_out_reset != 8'h00 || !enable[r][c]) ? 8'hFF : 8'h00),
                     .a_in(a_gated[r][c]),
                     .b_in(b_gated[r][c]),

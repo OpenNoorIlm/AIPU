@@ -64,12 +64,13 @@ module top_fpga(
     // ----------------------------------------------------------------
     // Task descriptor registers
     // ----------------------------------------------------------------
+    reg [1:0]  precision     = 2'b00;  // 00=INT8 01=FP8 10=BF16(stub)
     reg        task_valid    = 0;
     reg [7:0]  task_id       = 8'd1;
-    reg [31:0] task_cycles   = 32'd100;
+    reg [31:0] task_cycles   = 32'd300;
     reg        mem_start     = 0;
-    reg [0:0]  mem_chain_row = 0;
-    reg [0:0]  mem_chain_col = 0;
+    reg [0:0]  mem_chain_row = 0;  // 1-bit: 0 or 1 (for G=2)
+    reg [0:0]  mem_chain_col = 0;  // 1-bit: 0 or 1 (for G=2)
     reg [9:0]  mem_src_addr  = 10'd0;
     reg [9:0]  mem_dst_addr  = 10'd512;
     reg [31:0] mem_num_rows  = 32'd4;
@@ -178,6 +179,7 @@ module top_fpga(
                             if (rx_data == 8'h55 && !busy) begin
                                 mem_src_addr <= {pkt_buf[1][1:0], pkt_buf[2]};
                                 mem_dst_addr <= {pkt_buf[3][1:0], pkt_buf[4]};
+                                precision    <= pkt_buf[5][1:0];  // byte5: precision
                                 task_valid   <= 1;
                                 trig         <= 3'd4;
                                 busy         <= 1;
@@ -236,7 +238,7 @@ module top_fpga(
     wire [3:0] queue_count;
 
     top #(
-        .G(1), .C(1), .N(4),
+        .G(2), .C(1), .N(4),
         .QDEPTH(8),
         .SRAM_DEPTH(1024),
         .CLK_FREQ(27_000_000),
@@ -250,6 +252,7 @@ module top_fpga(
         .task_accepted(task_accepted),
         .queue_full   (queue_full),
         .queue_count  (queue_count),
+        .precision    (precision),
         .mem_start    (mem_start),
         .mem_chain_row(mem_chain_row),
         .mem_chain_col(mem_chain_col),

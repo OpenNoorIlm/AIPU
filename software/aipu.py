@@ -9,7 +9,8 @@ Protocol (UART 115200 8N1, /dev/ttyUSB0):
               Writes LEN bytes into FPGA SRAM starting at ADDR.
               Only send when AIPU is not busy (i.e. not right after compute()).
 
-  COMPUTE:  0xAA [src_hi] [src_lo] [dst_hi] [dst_lo] [0x02] [0x00] [0x55]
+  COMPUTE:  0xAA [src_hi] [src_lo] [dst_hi] [dst_lo] [PREC] [0x00] [0x55]
+              PREC: 0x00=INT8  0x01=FP8_E4M3  0x02=BF16(stub)
               Triggers computation: SRAM[src..src+N-1] = A vector,
               SRAM[src+N..src+2N-1] = B vector, result → SRAM[dst..dst+N*N*4-1].
 
@@ -107,23 +108,25 @@ class AIPU:
     # Compute trigger
     # ------------------------------------------------------------------
 
-    def compute(self, src: int = DEFAULT_SRC, dst: int = DEFAULT_DST) -> None:
+    def compute(self, src: int = DEFAULT_SRC, dst: int = DEFAULT_DST,
+                precision: int = 0) -> None:
         """Send a compute packet to the FPGA.
 
-        The FPGA will:
-          1. Clear accumulators
-          2. Load A from SRAM[src..src+N-1]
-          3. Load B from SRAM[src+N..src+2N-1]
-          4. Present data to the N×N systolic array
-          5. Drain the pipeline
-          6. Store N*N INT32 results to SRAM[dst..dst+N*N*4-1]
-          7. Send "RES: ..." over UART
+        precision:
+          0 = INT8   (default) — signed 8x8 -> INT32 accumulator
+          1 = FP8    — FP8 E4M3 x FP8 E4M3 -> FP32 accumulator
+          2 = BF16   — stub (aliases FP8 until 16-bit data path added)
+
+        Result interpretation:
+          INT8 → read with struct.unpack('>i', ...)  (signed int32)
+          FP8  → read with struct.unpack('>f', ...)  (float32)
         """
         pkt = bytes([
             0xAA,
             (src >> 8) & 0x03, src & 0xFF,
             (dst >> 8) & 0x03, dst & 0xFF,
-            0x02, 0x00,        # reserved (ignored by FPGA)
+            precision & 0x03,  # byte5: precision selector
+            0x00,
             0x55               # end marker
         ])
         self.ser.write(pkt)

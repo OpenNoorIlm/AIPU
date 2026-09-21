@@ -1,6 +1,7 @@
 /* verilator lint_off UNUSEDPARAM */
 /* verilator lint_off WIDTHEXPAND */
 /* verilator lint_off WIDTHTRUNC */
+/* verilator lint_off CASEINCOMPLETE */
 module memory_ctrl #(
     parameter N          = 4,
     parameter G          = 2,
@@ -91,9 +92,15 @@ module memory_ctrl #(
             dst_latch    <= 0;
             src_latch    <= 0;
             k_iter       <= 0;
-            // zero a_in and b_in
-            a_in[0][0] <= 0; a_in[0][1] <= 0; a_in[0][2] <= 0; a_in[0][3] <= 0;
-            b_in[0][0] <= 0; b_in[0][1] <= 0; b_in[0][2] <= 0; b_in[0][3] <= 0;
+            // zero all a_in and b_in across all G rows/cols
+            begin : reset_zero
+                integer ri, ni;
+                for (ri = 0; ri < G; ri = ri + 1)
+                    for (ni = 0; ni < N; ni = ni + 1) begin
+                        a_in[ri][ni] <= 0;
+                        b_in[ri][ni] <= 0;
+                    end
+            end
         end else begin
             case (state)
 
@@ -101,9 +108,15 @@ module memory_ctrl #(
                     done       <= 0;
                     mac_reset  <= 0;
                     sram_wr_en <= 0;
-                    // Keep a_in/b_in at zero while idle
-                    a_in[0][0] <= 0; a_in[0][1] <= 0; a_in[0][2] <= 0; a_in[0][3] <= 0;
-                    b_in[0][0] <= 0; b_in[0][1] <= 0; b_in[0][2] <= 0; b_in[0][3] <= 0;
+                    // Keep all a_in/b_in at zero while idle
+                    begin : idle_zero
+                        integer ri, ni;
+                        for (ri = 0; ri < G; ri = ri + 1)
+                            for (ni = 0; ni < N; ni = ni + 1) begin
+                                a_in[ri][ni] <= 0;
+                                b_in[ri][ni] <= 0;
+                            end
+                    end
                     if (start) begin
                         sel_row      <= chain_row;
                         sel_col      <= chain_col;
@@ -195,7 +208,7 @@ module memory_ctrl #(
                     drain_cnt <= drain_cnt + 1;
                     // Exit one cycle AFTER last input (drain_cnt==N, not N-1)
                     // so the last a/b values are registered before state changes
-                    if (drain_cnt >= 2*N - 1) begin
+                    if (drain_cnt >= N) begin
                         drain_cnt <= 0;
                         state     <= DRAIN;
                     end
