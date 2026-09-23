@@ -1,8 +1,2 @@
-# Read all RTL files
-read_verilog -sv mac.v systolic_NxN.v chain_CxC.v grid_GxG.v dispatcher.v memory_ctrl.v top.v
-
-# Synthesize for Gowin GW2A-18 (Tang Primer 20K)
-synth_gowin -top top -json top.json
-
-# Show statistics
-stat
+read_systemverilog mac.v systolic_NxN.v chain_CxC.v grid_GxG.v dispatcher.v memory_ctrl.v uart_tx.v uart_rx.v result_sender.v top.v top_fpga.v
+synth_gowin -top top_fpga -json top_fpga.json

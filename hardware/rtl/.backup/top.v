@@ -6,11 +6,7 @@ module top #(
     parameter QDEPTH     = 8,
     parameter SRAM_DEPTH = 1024,
     parameter CLK_FREQ   = 27_000_000,
-    parameter BAUD_RATE  = 115_200,
-    // PARALLEL_MEM: 0 = single mem_ctrl (current, G>1 is sequential)
-    //               1 = one mem_ctrl per grid cell (true 4x throughput)
-    //               Stub only — instantiation not yet wired. See continue.md.
-    parameter PARALLEL_MEM = 0
+    parameter BAUD_RATE  = 115_200
 )(
     input clk,
     input reset,
@@ -73,10 +69,8 @@ module top #(
         .a_out(a_out), .done(done)
     );
 
-    // NOTE: PARALLEL_MEM=1 requires G*G memory_ctrl instances with SRAM
-    // arbitration — currently only the single-instance path is implemented.
     memory_ctrl #(.G(G), .C(C), .N(N), .SRAM_DEPTH(SRAM_DEPTH)) mem(
-        .clk(clk), .reset(reset), .precision(precision),
+        .clk(clk), .reset(reset),
         .sram_rd_addr(mem_sram_rd_addr),
         .sram_wr_addr(sram_wr_addr),
         .sram_wr_en(sram_wr_en),

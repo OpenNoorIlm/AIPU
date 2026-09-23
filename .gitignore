@@ -33,3 +33,4 @@ __pycache__/
 # Internal session docs (for Claude continuity only)
 about.md
 continue.md
+./edit.py

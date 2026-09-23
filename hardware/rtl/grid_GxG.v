@@ -15,7 +15,7 @@ module grid_GxG #(
     input  [7:0] next_b_in[0:G-1][0:C-1][0:N-1],
     input  enable[0:G-1][0:G-1],
     output [31:0] out[0:G-1][0:G-1][0:C-1][0:N-1][0:N-1],
-    output [7:0]  a_out[0:G-1][0:N-1],
+    output [7:0] a_out[0:G-1][0:N-1],
     output done[0:G-1][0:G-1]
 );
     wire [7:0] a_chain     [0:G-1][0:G][0:N-1];
@@ -56,13 +56,13 @@ module grid_GxG #(
         for (int ri = 0; ri < G; ri = ri + 1) begin
             for (int ci = 0; ci < G; ci = ci + 1) begin
                 for (int ni = 0; ni < N; ni = ni + 1) begin
-                    a_gated[ri][ci][ni] <= enable[ri][ci] ? a_chain[ri][ci][ni] : 8'h00;
-                    b_gated[ri][ci][ni] <= enable[ri][ci] ? b_chain[ri][ci][ni] : 8'h00;
+                    a_gated[ri][ci][ni] <= enable[ri][ci] ? a_chain[ri][ci][ni] : 16'h0;
+                    b_gated[ri][ci][ni] <= enable[ri][ci] ? b_chain[ri][ci][ni] : 16'h0;
                 end
                 for (int cti = 0; cti < C; cti = cti + 1) begin
                     for (int ni = 0; ni < N; ni = ni + 1) begin
-                        next_a_gated[ri][ci][cti][ni] <= enable[ri][ci] ? next_a_chain[ri][ci][cti][ni] : 8'h00;
-                        next_b_gated[ri][ci][cti][ni] <= enable[ri][ci] ? next_b_chain[ri][ci][cti][ni] : 8'h00;
+                        next_a_gated[ri][ci][cti][ni] <= enable[ri][ci] ? next_a_chain[ri][ci][cti][ni] : 16'h0;
+                        next_b_gated[ri][ci][cti][ni] <= enable[ri][ci] ? next_b_chain[ri][ci][cti][ni] : 16'h0;
                     end
                 end
             end
@@ -73,17 +73,12 @@ module grid_GxG #(
         for (r = 0; r < G; r = r + 1) begin : grow
             for (c = 0; c < G; c = c + 1) begin : gcol
                 chain_CxC #(.N(N), .C(C)) chain_inst(
-                    .clk(clk),
-                    .reset(reset),
-                    .precision(precision),
+                    .clk(clk), .reset(reset), .precision(precision),
                     .in_out_reset((in_out_reset != 8'h00 || !enable[r][c]) ? 8'hFF : 8'h00),
-                    .a_in(a_gated[r][c]),
-                    .b_in(b_gated[r][c]),
-                    .next_a_in(next_a_gated[r][c]),
-                    .next_b_in(next_b_gated[r][c]),
+                    .a_in(a_gated[r][c]), .b_in(b_gated[r][c]),
+                    .next_a_in(next_a_gated[r][c]), .next_b_in(next_b_gated[r][c]),
                     .out(out[r][c]),
-                    .a_out(a_chain[r][c+1]),
-                    .b_out(b_chain[r+1][c]),
+                    .a_out(a_chain[r][c+1]), .b_out(b_chain[r+1][c]),
                     .out_reset()
                 );
                 assign done[r][c] = !enable[r][c];

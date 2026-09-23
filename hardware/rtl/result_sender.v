@@ -1,3 +1,4 @@
+/* verilator lint_off WIDTHTRUNC */
 // ============================================================================
 // Module: result_sender
 // Sends boot message "AIPU OK\r\n" then on each mem_done:

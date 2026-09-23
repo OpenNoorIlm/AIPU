@@ -8,8 +8,8 @@ module chain_CxC #(parameter N = 4, C = 2)(
     input  [7:0] next_a_in[0:C-1][0:N-1],
     input  [7:0] next_b_in[0:C-1][0:N-1],
     output [31:0] out[0:C-1][0:N-1][0:N-1],
-    output [7:0]  a_out[0:N-1],
-    output [7:0]  b_out[0:N-1],
+    output [7:0] a_out[0:N-1],
+    output [7:0] b_out[0:N-1],
     output [7:0]  out_reset[0:C-1][0:N-1]
 );
     wire [7:0] a_chain[0:C][0:N-1];
@@ -28,17 +28,12 @@ module chain_CxC #(parameter N = 4, C = 2)(
     generate
         for (t = 0; t < C; t = t + 1) begin : tile
             systolic_NxN #(.N(N)) tile_inst(
-                .clk(clk),
-                .reset(reset),
-                .precision(precision),
+                .clk(clk), .reset(reset), .precision(precision),
                 .in_out_reset(in_out_reset),
-                .a_in(a_chain[t]),
-                .b_in(b_chain[t]),
-                .next_a_in(next_a_in[t]),
-                .next_b_in(next_b_in[t]),
+                .a_in(a_chain[t]), .b_in(b_chain[t]),
+                .next_a_in(next_a_in[t]), .next_b_in(next_b_in[t]),
                 .out(out[t]),
-                .a_out(a_chain[t+1]),
-                .b_out(b_chain[t+1]),
+                .a_out(a_chain[t+1]), .b_out(b_chain[t+1]),
                 .out_reset(out_reset[t])
             );
         end

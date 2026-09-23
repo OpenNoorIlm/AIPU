@@ -9,13 +9,13 @@ module systolic_NxN #(parameter N = 4)(
     input  [7:0] next_a_in[0:N-1],
     input  [7:0] next_b_in[0:N-1],
     output reg [31:0] out[0:N-1][0:N-1],
-    output reg [7:0]  a_out[0:N-1],
-    output reg [7:0]  b_out[0:N-1],
+    output reg [7:0] a_out[0:N-1],
+    output reg [7:0] b_out[0:N-1],
     output reg [7:0]  out_reset[0:N-1]
 );
     wire [7:0] a_wire[0:N-1][0:N];
     wire [7:0] b_wire[0:N][0:N-1];
-    wire [7:0] out_reset_wire[0:N-1][0:N-1];
+    wire [7:0]  out_reset_wire[0:N-1][0:N-1];
     wire [7:0] next_a_mac[0:N-1][0:N-1];
     wire [7:0] next_b_mac[0:N-1][0:N-1];
 
@@ -60,21 +60,15 @@ module systolic_NxN #(parameter N = 4)(
             for (j = 0; j < N; j = j + 1) begin : col
                 wire [31:0] mac_out;
                 mac mac_inst(
-                    .clk(clk),
-                    .reset(reset),
-                    .precision(precision),
+                    .clk(clk), .reset(reset), .precision(precision),
                     .in_out_reset(in_out_reset),
-                    .a(a_wire[i][j]),
-                    .b(b_wire[i][j]),
-                    .next_a(next_a_mac[i][j]),
-                    .next_b(next_b_mac[i][j]),
+                    .a(a_wire[i][j]),  .b(b_wire[i][j]),
+                    .next_a(next_a_mac[i][j]), .next_b(next_b_mac[i][j]),
                     .out(mac_out),
-                    .a_out(a_wire[i][j+1]),
-                    .b_out(b_wire[i+1][j]),
+                    .a_out(a_wire[i][j+1]), .b_out(b_wire[i+1][j]),
                     .out_reset(out_reset_wire[i][j])
                 );
-                always @(posedge clk)
-                    out[i][j] <= mac_out;
+                always @(posedge clk) out[i][j] <= mac_out;
             end
         end
     endgenerate

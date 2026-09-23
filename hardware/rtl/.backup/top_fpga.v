@@ -67,10 +67,10 @@ module top_fpga(
     reg [1:0]  precision     = 2'b00;  // 00=INT8 01=FP8 10=BF16(stub)
     reg        task_valid    = 0;
     reg [7:0]  task_id       = 8'd1;
-    reg [31:0] task_cycles   = 32'd500;  // BF16 needs ~250 cycles; 500 is safe
+    reg [31:0] task_cycles   = 32'd300;
     reg        mem_start     = 0;
-    reg [3:0]  mem_chain_row = 0;  // 4-bit: G up to 16
-    reg [3:0]  mem_chain_col = 0;  // 4-bit: G up to 16
+    reg [0:0]  mem_chain_row = 0;  // 1-bit: 0 or 1 (for G=2)
+    reg [0:0]  mem_chain_col = 0;  // 1-bit: 0 or 1 (for G=2)
     reg [9:0]  mem_src_addr  = 10'd0;
     reg [9:0]  mem_dst_addr  = 10'd512;
     reg [31:0] mem_num_rows  = 32'd4;
@@ -79,9 +79,7 @@ module top_fpga(
     // Command protocol
     //
     // COMPUTE packet (8 bytes):
-    //   0xAA [SRC_HI] [SRC_LO] [DST_HI] [DST_LO] [PREC] [R|C]  [0x55]
-    //        byte5 = precision (00=INT8, 01=FP8, 10=BF16)
-    //        byte6 = {chain_row[3:0], chain_col[3:0]}  (G>1 cell select)
+    //   0xAA [SRC_HI] [SRC_LO] [DST_HI] [DST_LO] [0x02] [0x00] [0x55]
     //   Triggers computation using given SRAM src/dst addresses.
     //
     // WRITE packet (4 + len bytes):
@@ -179,11 +177,9 @@ module top_fpga(
                             // All 8 bytes received — validate end marker
                             cmd_state <= CMD_IDLE;
                             if (rx_data == 8'h55 && !busy) begin
-                                mem_src_addr  <= {pkt_buf[1][1:0], pkt_buf[2]};
-                                mem_dst_addr  <= {pkt_buf[3][1:0], pkt_buf[4]};
-                                precision     <= pkt_buf[5][1:0];  // byte5: precision
-                                mem_chain_row <= pkt_buf[6][7:4];  // byte6 hi nibble: row
-                                mem_chain_col <= pkt_buf[6][3:0];  // byte6 lo nibble: col
+                                mem_src_addr <= {pkt_buf[1][1:0], pkt_buf[2]};
+                                mem_dst_addr <= {pkt_buf[3][1:0], pkt_buf[4]};
+                                precision    <= pkt_buf[5][1:0];  // byte5: precision
                                 task_valid   <= 1;
                                 trig         <= 3'd4;
                                 busy         <= 1;
@@ -241,10 +237,8 @@ module top_fpga(
     wire queue_full;
     wire [3:0] queue_count;
 
-    // To enable parallel-grid (4x throughput): set G(2), PARALLEL_MEM(1)
-    // and provide G*G memory_ctrls. See continue.md Phase 4.
     top #(
-        .G(2), .C(1), .N(4), .PARALLEL_MEM(0),
+        .G(2), .C(1), .N(4),
         .QDEPTH(8),
         .SRAM_DEPTH(1024),
         .CLK_FREQ(27_000_000),
